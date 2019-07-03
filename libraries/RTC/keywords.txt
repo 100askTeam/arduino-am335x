@@ -1,0 +1,33 @@
+#######################################
+# Syntax Coloring Map RTC
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+RTC	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+readTime	KEYWORD2
+setTime	KEYWORD2    
+timePrintf	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+rtc	LITERAL1
+year	LITERAL1
+month	LITERAL1
+day	LITERAL1
+week	LITERAL1
+hour	LITERAL1
+minute	LITERAL1
+second	LITERAL1
+
+h12	LITERAL1
+am	LITERAL1
