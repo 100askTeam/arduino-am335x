@@ -26,6 +26,8 @@ int main(int argc, char **argv)
         led.off(); 
         sleep(1);
     }
+    
+    return 0;
 }
     
 

@@ -9,8 +9,8 @@
 * Notes:       none.
 * Description: 
 * 1. 实例化KEYBOARD；
-* 2. 循环里，调用readKey()读取按键状态；
-* 3. 打印按键编号(code)和按键值(value)：
+* 2. 循环里，调用readKey()读取按键状态，并判断返回值；
+* 3. 调用getCode()获取按键编号code，调用getValue()获取按键值value，并打印：
 * 4. 按键编号对应如下：
 *    KEY1 105
 *    KEY2 106
@@ -26,13 +26,18 @@
 
 int main(int argc, char **argv)
 {
+    int ret;
+
     KEYBOARD keyboard;
     
     while(1)
     {
-        keyboard.readKey();
+        ret = keyboard.readKey();
         
-        cout << "Code:" << keyboard.code << " Value:" << keyboard.value << endl;
+        if (ret == 0)
+            cout << "Code:" << keyboard.getCode() << " Value:" << keyboard.getValue() << endl;  
     }
+    
+    return 0;
 }
 

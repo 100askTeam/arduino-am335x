@@ -14,14 +14,14 @@ class KEYBOARD  {
     private:
         string m_sPath;
         int m_iFileEvent;
-        
-    public: 
-        int code;
-        int value;
+        int m_iCode;
+        int m_iValue;
     
     public:
         KEYBOARD();
         virtual int readKey(void);
+        virtual int getCode(void);
+        virtual int getValue(void);
         ~KEYBOARD(void);
 };
 

@@ -21,14 +21,13 @@ int main(int argc, char **argv)
     while(1)
     {
         if(sr501.getSignal() == 1)
-        {
             cout << "Detected someone!" <<endl;
-            while(sr501.getSignal() == 0);
-        }
         else
             cout << "No one detected!" <<endl;
         
         msleep(200);  
     }
+    
+    return 0;
 }
 

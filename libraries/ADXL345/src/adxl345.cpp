@@ -11,9 +11,9 @@ static void func1(int signal)
     
     ad_info_msg.chip_select = spi_cs;
     if (spi_cs == 0)
-        ad_info_msg.irq_pin = 7;
+        ad_info_msg.irq_pin = GPIO1;
     else 
-        ad_info_msg.irq_pin = 12; 
+        ad_info_msg.irq_pin = GPIO2; 
     
     if (spidev0_fd > 0)
     {
@@ -37,9 +37,22 @@ ADXL345::ADXL345(int num) : m_iCS(num - 1)
     struct adxl34x_info_msg ad_info_msg;
     ad_info_msg.chip_select = this->m_iCS;
     if (this->m_iCS == 0)
-        ad_info_msg.irq_pin = 7;
+    {
+        ad_info_msg.irq_pin = GPIO1;
+        GPIO g = GPIO(ad_info_msg.irq_pin);
+        g.exportGPIO();
+        usleep(100);
+        g.unexportGPIO();
+    }  
     else 
-        ad_info_msg.irq_pin = 12; 
+    {
+        ad_info_msg.irq_pin = GPIO2;
+        GPIO g = GPIO(ad_info_msg.irq_pin);
+        g.exportGPIO();
+        usleep(100);
+        g.unexportGPIO();
+    }
+
     
     this->m_iAdxl345File = open("/dev/adxl345", O_RDWR);
     if (this->m_iAdxl345File < 0)
@@ -99,15 +112,35 @@ int ADXL345::readData(void)
     return 0;
 }
 
+int ADXL345::getTouchValue(void)
+{
+    return this->touch_value;
+}
+
+int ADXL345::getXValue(void)
+{
+    return this->x_value;
+}
+
+int ADXL345::getYValue(void)
+{
+    return this->y_value;
+}
+
+int ADXL345::getZValue(void)
+{
+    return this->z_value;
+}
+
 ADXL345::~ADXL345()
 {
     struct adxl34x_info_msg ad_info_msg;
     
     ad_info_msg.chip_select = spi_cs;
     if (spi_cs == 0)
-        ad_info_msg.irq_pin = 7;
+        ad_info_msg.irq_pin = GPIO1;
     else 
-        ad_info_msg.irq_pin = 12; 
+        ad_info_msg.irq_pin = GPIO2; 
     
     if (spidev0_fd > 0)
     {

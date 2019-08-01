@@ -18,7 +18,7 @@
 
 int main(int argc, char **argv)
 {
-    DAC dac(1);
+    DAC dac(SPI_A);
     float vol = 1.7;//vol range: 0 ~ 4.092
 
     while(1)
@@ -36,5 +36,7 @@ int main(int argc, char **argv)
             vol = vol - 0.01;
             msleep(5);
         }
-    }   
+    } 
+
+    return 0;
 }

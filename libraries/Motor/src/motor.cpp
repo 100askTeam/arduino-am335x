@@ -1,12 +1,23 @@
 
 #include "motor.h"
 
+
+static void func1(int signal)
+{
+    MOTOR motor;
+    
+    motor.motorStop();
+    
+    exit(0);
+}
+
+
 MOTOR::MOTOR()
 {
-    this->m_iPin1 = 6;
-    this->m_iPin2 = 7;
-    this->m_iPin3 = 12;
-    this->m_iPin4 = 52;
+    this->m_iPin1 = GPIO0;
+    this->m_iPin2 = GPIO1;
+    this->m_iPin3 = GPIO2;
+    this->m_iPin4 = GPIO3;
 
     this->m_iSpeed = 4*2; 
 
@@ -33,6 +44,10 @@ MOTOR::MOTOR()
     usleep(25000);
     setDirection(0); 
     setValue(0);
+
+    signal(SIGINT, func1);
+    signal(SIGTERM, func1); 
+    signal(SIGKILL, func1); //无法捕获kill -9 ,应用层不能kill -9 退出，不然可能会导致GPIO输出形成回路，电机发热
 }
 
 MOTOR::~MOTOR(void)

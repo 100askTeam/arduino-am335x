@@ -3,6 +3,8 @@
 
 
 #include <Arduino.h>
+#include <gpio.h>
+#include <spi.h>
 
 #define ADXL34X_IOC_MAGIC    'a'
 #define ADXL34X_IOCINIT      _IOWR(ADXL34X_IOC_MAGIC, 0, void *)
@@ -25,9 +27,7 @@ class ADXL345 {
         int m_iEventFile;
         int m_iAdxl345File;
     
-    public: 
         int touch_value;    
-
         int x_value;    
         int y_value;
         int z_value;
@@ -35,6 +35,10 @@ class ADXL345 {
     public:
         ADXL345(int num);
         virtual int readData(void);
+        virtual int getTouchValue(void);
+        virtual int getXValue(void);
+        virtual int getYValue(void);
+        virtual int getZValue(void);
         virtual ~ADXL345();
 };
 

@@ -27,7 +27,7 @@ int ADC::getValue(void)
     if(read(this->m_iFile, &buff, sizeof(buff)) < 0) 
         perror("ADC: Failed to read the device\n");
 
-    this->m_iValue =  atoi(buff);
+    this->m_iValue = atoi(buff);
     
     close(this->m_iFile);
     

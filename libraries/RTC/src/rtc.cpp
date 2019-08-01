@@ -8,7 +8,7 @@ RTC::RTC(int num)
     else if(num == 2)
         I2C(I2C1, RX8025SA);
     
-    this->m_iDevAddr = RX8025SA; //bug
+    this->m_iDevAddr = RX8025SA; 
     
     this->rx8025Init();
 }
@@ -16,7 +16,8 @@ RTC::RTC(int num)
 
 void RTC::rx8025Init(void)
 {
-    unsigned char read_buf[2], write_buf=0;
+    Time t;
+    unsigned char read_buf[2], write_buf = 0;
     int need_reset=0, need_clear=0;
     readRegister((0x0E<<4)|0x08, 2, read_buf);
 
@@ -47,6 +48,7 @@ void RTC::rx8025Init(void)
     if (!(read_buf[1] & (1<<2))) 
         need_clear = 1;
     
+    
     if (need_reset || need_clear)
     {
         write_buf = read_buf[0];
@@ -55,51 +57,91 @@ void RTC::rx8025Init(void)
         writeRegister(0x0F<<4, write_buf);
     }
     
+    if (!(read_buf[0] & (1<<6))) //改为24小时制
+    {
+        write_buf = read_buf[0];
+        write_buf |= (1<<5);
+        writeRegister(0x0F<<4, write_buf);
+        
+        readRegister((0x0E<<4)|0x08, 1, read_buf);
+        printf("reg=0x%x\n", read_buf[0]);
+    }
+    else
+    {
+        readRegister((0x0E<<4)|0x08, 1, read_buf);
+        printf("reg=0x%x\n", read_buf[0]);
+    }
+    
     if(need_reset)
     {
         //默认时间 2000/1/1
-        this->year = 2000;
-        this->month = 1;
-        this->day = 1;
-        this->week = 6;
-        this->hour = 0;
-        this->minute = 0;
-        this->second = 0;
+        t.year = 2000;
+        t.month = 1;
+        t.day = 1;
+        t.week = 6;
+        t.hour = 0;
+        t.minute = 0;
+        t.second = 0;
 
-        this->setTime();
+        this->setTime(t);
         printf("Set the default time:2000-01-01 00:00:00, you may have to readjust the clock\n");
     }
 }
 
 
-int RTC::readTime()
+Time RTC::readTime()
 {
+    Time t;
     unsigned char rtc_data[7];
 
     readRegister((0x00<<4)|0x08, 7, rtc_data);
     
-    //printf("readTime: 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", 
-    //rtc_data[0], rtc_data[1], rtc_data[2], rtc_data[3], rtc_data[4], rtc_data[5], rtc_data[6]);
-    
+    printf("readTime: 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", 
+    rtc_data[0], rtc_data[1], rtc_data[2], rtc_data[3], rtc_data[4], rtc_data[5], rtc_data[6]);
+ 
     this->second = (rtc_data[0] & 0xF) + ((rtc_data[0] & 0x70)>>4)*10;
     this->minute = (rtc_data[1] & 0xF) + ((rtc_data[1] & 0x70)>>4)*10;
-
-    this->hour = (rtc_data[2] & 0xF) + ((rtc_data[2] & 0x30)>>4)*10;
-    
-    
+#if 0  //12小时制  
+    if (rtc_data[2] == 0x12)
+        this->hour = 0;
+    else if (rtc_data[2] <= 0x11 && rtc_data[2] >= 0x1)
+        this->hour = (rtc_data[2] & 0xF) + ((rtc_data[2] & 0x10)>>4)*10;
+    else if (rtc_data[2] == 0x32)
+        this->hour = 12;
+    else if (rtc_data[2] >= 21 && rtc_data[2] <= 0x31)
+        this->hour = (rtc_data[2] & 0xF) + ((rtc_data[2] & 0x30)>>4)*10 -8;
+#else  //24小时制  
+    this->hour   = (rtc_data[2] & 0xF) + ((rtc_data[2] & 0x30)>>4)*10;
+#endif
     this->week   = (rtc_data[3] & 0x7);
     this->day    = (rtc_data[4] & 0xF) + ((rtc_data[4] & 0x30)>>4)*10;
     this->month  = (rtc_data[5] & 0xF) + ((rtc_data[5] & 0x10)>>4)*10;
     this->year   = (rtc_data[6] & 0xF) + ((rtc_data[6] & 0xF0)>>4)*10 + 2000;
 
-    return 0;
+    t.second = this->second;
+    t.minute = this->minute;
+    t.hour   = this->hour;  
+    t.week   = this->week;  
+    t.day    = this->day;   
+    t.month  = this->month; 
+    t.year   = this->year;  
+    
+    return t;
 }
 
-int RTC::setTime()
+int RTC::setTime(Time t)
 {
     unsigned int ctrl;
     unsigned char rtc_data[7];
     memset(rtc_data, 0, 7*sizeof(unsigned char));
+    
+    this->second = t.second;
+    this->minute = t.minute;
+    this->hour   = t.hour;
+    this->week   = t.week;
+    this->day    = t.day;
+    this->month  = t.month; 
+    this->year   = t.year;  
 
     if(this->second > 59)
         goto err;
@@ -115,10 +157,21 @@ int RTC::setTime()
     if (this->hour>23)
         goto err;   
     else
-        rtc_data[2] = (this->hour/10)<<4 | (this->hour%10);     
-    
-        
-    
+    {
+#if 0  //12小时制
+        if (this->hour == 0)
+            rtc_data[2] = 0x12;
+        else if (this->hour <= 11 && this->hour >= 1)
+            rtc_data[2] = (this->hour/10)<<4 | (this->hour%10);
+        else if (this->hour == 12)
+            rtc_data[2] = 0x32;
+        else if (this->hour >= 13 && this->hour <= 23)
+            rtc_data[2] = ((this->hour + 8)/10)<<4 | ((this->hour + 8)%10);
+#else  //24小时制  
+        rtc_data[2] = (this->hour/10)<<4 | (this->hour%10);  
+#endif
+    }
+ 
     if(this->week>6)
         goto err;
     else
@@ -156,17 +209,15 @@ int RTC::setTime()
 
 err:
     printf("setTime err.\n\r");
-    return 1;       
+    return -1;       
 
 }
 
-int RTC::timePrintf()
+void RTC::timePrintf()
 {
     readTime();
 
     printf("Time: %d-%02d-%02d %02d:%02d:%02d [%s]\n", this->year, this->month,this->day,this->hour,this->minute,this->second, this->week_string[this->week]);
-    
-    return 0;
 }
 
 

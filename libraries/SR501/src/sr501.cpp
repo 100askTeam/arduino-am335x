@@ -3,7 +3,7 @@
 
 SR501::SR501()
 {
-    setPin(0*32+6);
+    setPin(GPIO0);
     
     exportGPIO();
     usleep(25000);

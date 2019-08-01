@@ -7,15 +7,16 @@
 
 class GPS : public UART {
     private:
-
-    public:
         char RawData[256];
-    
+        
+    public:
         GPS(int num);
         ~GPS();
+        
         virtual int readRawData(char *data);
-        virtual int printfAnalyzeData();
-
+        virtual int readAnalyzeData(float *data);
+        virtual void printfRawData(void);
+        virtual void printfAnalyzeData(void);
 };
 
     

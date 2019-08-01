@@ -23,5 +23,7 @@ int main(int argc, char **argv)
         cout << "distance: " << sr04.getDistance() << "cm" <<endl;
         msleep(200);
     }
+    
+    return 0;
 }
 

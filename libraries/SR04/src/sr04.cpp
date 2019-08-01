@@ -3,8 +3,8 @@
 
 SR04::SR04()
 {
-    this->m_iTrigPin = 6;
-    this->m_iEchoPin = 7;
+    this->m_iTrigPin = GPIO0;
+    this->m_iEchoPin = GPIO1;
     
     setPin(this->m_iTrigPin);
     exportGPIO();

@@ -13,14 +13,14 @@ OLED::OLED(int num) : m_SPInum(num)
     
     if (this->m_SPInum == 1)
     {
-        m_cDCPin = GPIO(7);
+        m_cDCPin = GPIO(GPIO1);
         m_cDCPin.exportGPIO();
         usleep(1000);
         m_cDCPin.setDirection(0);
     }
     else if (this->m_SPInum == 2)
     {
-        m_cDCPin = GPIO(12);
+        m_cDCPin = GPIO(GPIO2);
         m_cDCPin.exportGPIO();
         usleep(1000);
         m_cDCPin.setDirection(0);
@@ -56,48 +56,50 @@ void OLED::setPageAddrMode(void)
     this->writeCmd(0x02);
 }
 
-void OLED::setPos(int page, int col)
+void OLED::setPos(int x, int y)
 {
-    this->writeCmd(0xB0 + page); 
-    this->writeCmd(col & 0xF);   
-    this->writeCmd(0x10 + (col >> 4)); 
+    this->writeCmd(0xB0 + y); 
+    this->writeCmd(x & 0xF);   
+    this->writeCmd(0x10 + (x >> 4)); 
 
 }
 
-void OLED::putChar(int page, int col, char c)
+void OLED::putChar(int x, int y, char c)
 {
     unsigned char *dots = (unsigned char *)oled_asc2_8x16[c - ' '];
 
-    this->setPos(page, col);
+    this->setPos(x, y);
     this->transfer(&dots[0] , NULL, 8); 
     
-    this->setPos(page+1, col);
+    this->setPos(x, y+1);
     this->transfer(&dots[8] , NULL, 8);
 }
 
 
-void OLED::OLEDPrint(int page, int col, string str)
+void OLED::OLEDPrint(int x, int y, string str)
 {
     int i = 0;
 
     char *c = (char *)str.c_str(); 
 
-    this->OLEDClearPage(page);
-    this->OLEDClearPage(page+1);
+    //this->OLEDClearPage(y);
+    //this->OLEDClearPage(y+1);
     
     while (c[i])
     {
-        this->putChar(page, col, c[i]);
-        col += 8;
-        if (col > 127)
+        this->putChar(x, y, c[i]);
+        x += 8;
+        if (x > 127)
         {
-            col = 0;
-            page += 2;
-            if (page <= 6) //hceng:Fix the last row of incomplete display
+            x = 0;
+            y += 2;
+#if 0
+            if (y <= 6) 
             {
-                this->OLEDClearPage(page);
-                this->OLEDClearPage(page+1);    
+                this->OLEDClearPage(y);
+                this->OLEDClearPage(y+1);    
             }
+#endif
         }
         i++;
     }
@@ -105,20 +107,20 @@ void OLED::OLEDPrint(int page, int col, string str)
 
 void OLED::OLEDClearAll(void)
 {
-    int page, i;
-    for (page = 0; page < 8; page++)
+    int y, i;
+    for (y = 0; y < 8; y++)
     {
-        this->setPos(page, 0);
+        this->setPos(0, y);
         for (i = 0; i < 128; i++)
             this->writeData(0);
     }
 }
 
-void OLED::OLEDClearPage(int page)
+void OLED::OLEDClearPage(int y)
 {
     int i;
     
-    this->setPos(page, 0);
+    this->setPos(0, y);
     for (i = 0; i < 128; i++)
         this->writeData(0);     
 }
@@ -129,7 +131,7 @@ void OLED::OLEDInit(void)
     this->writeCmd(0x00); /*set lower column address*/ 
     this->writeCmd(0x10); /*set higher column address*/ 
     this->writeCmd(0x40); /*set display start line*/ 
-    this->writeCmd(0xB0); /*set page address*/ 
+    this->writeCmd(0xB0); /*set y address*/ 
     this->writeCmd(0x81); /*contract control*/ 
     this->writeCmd(0x66); /*128*/ 
     this->writeCmd(0xA1); /*set segment remap*/ 

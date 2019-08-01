@@ -23,17 +23,28 @@ int KEYBOARD::readKey(void)
     
     ret = read(this->m_iFileEvent , &ev, sizeof(struct input_event));  
     if (ret < 0) {  
-        perror("KEYBOARD: read event error!\n");  
+        perror("KEYBOARD: read event error!\n"); 
+        return -1;
     }  
         
     if (ev.type == EV_KEY) 
     {
-        this->code  = ev.code;
-        this->value = ev.value;
-        
-        //cout<<"code:"<<this->code<<endl;
-        //cout<<"value:"<<this->value<<endl;
+        this->m_iCode  = ev.code;
+        this->m_iValue = ev.value;
+
+        return 0;
     }
-    
-    return 0;
+    else 
+        return 0;
 }
+
+int KEYBOARD::getCode(void)
+{
+    return this->m_iCode;
+}
+
+int KEYBOARD::getValue(void)
+{   
+    return this->m_iValue;  
+}
+

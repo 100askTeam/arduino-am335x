@@ -2,7 +2,7 @@
 
 DS18B20::DS18B20()
 {   
-    this->m_iPin = (0*32+6);
+    this->m_iPin = GPIO0;
     this->m_sPath = "/dev/ds18b20";
     
     this->m_iFile = open(this->m_sPath.c_str(), O_RDWR);

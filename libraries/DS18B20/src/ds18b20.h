@@ -40,7 +40,6 @@ class DS18B20  {
         ~DS18B20(void);
 };
 
-
 #endif
 
 

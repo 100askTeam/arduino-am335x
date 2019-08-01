@@ -9,8 +9,8 @@
 * Notes:       none.
 * Description: 
 * 1. 实例化IRDA；
-* 2. 调用readKey()读取按键；
-* 3. 打印按键编号(code)和按键值(value)：
+* 2. 调用readKey()读取按键，并判断返回值；
+* 3. 调用getCode()获取按键编号code，调用getValue()获取按键值value，并打印：
 * 4. 按键编号对应如下：
 *    KEY_CHANNELDOWN        0x45
 *    KEY_CHANNEL            0x46
@@ -44,13 +44,17 @@
 
 int main(int argc, char **argv)
 {
+    int ret;
     IRDA irda(GPIO0);
     
     while(1)
     {
-        irda.readKey();
+        ret = irda.readKey();
         
-        cout << "Code:" << irda.code << " Value:" << irda.value << endl;
+        if(ret == 0)
+            cout << "Code:" << irda.getCode() << " Value:" << irda.getValue() << endl;
     }
+    
+    return 0;
 }
 

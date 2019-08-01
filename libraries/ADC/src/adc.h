@@ -6,6 +6,9 @@
 #define ADC1_PATH  "/sys/devices/platform/ocp/44e0d000.tscadc/TI-am335x-adc/iio:device0/in_voltage4_raw"
 #define ADC2_PATH  "/sys/devices/platform/ocp/44e0d000.tscadc/TI-am335x-adc/iio:device0/in_voltage5_raw"
 
+#define ADC_A  1
+#define ADC_B  2
+
 class ADC {
     private:
         string m_sPath;

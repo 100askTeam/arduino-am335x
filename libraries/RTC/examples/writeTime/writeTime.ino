@@ -9,7 +9,7 @@
 * Notes:       Onboard RTC at I2C0.
 * Description: 
 * 1. 实例化RTC，传入参数为对应的I2C接口编号；
-* 2. 设置rtc的各个参数，含义/范围如下：
+* 2. 定义时间结构体Time，为每个成员设置值，介绍如下：
 +----------+-----------+------------+-----------------------------------------+
 | variable |  meaning  |    range   |                   note                  |
 +----------+-----------+------------+-----------------------------------------+
@@ -28,7 +28,7 @@
 |  second  |     秒    |    0-59    |                                         |
 +----------+-----------+------------+-----------------------------------------+
 
-* 3. 使用setTime()设置时间；
+* 3. 使用setTime()设置时间，传入前面设置好的Time结构体；
 * 4. 循环里，间隔1S,使用timePrintf()打印RTC模块时间
 */
 #include <Arduino.h>
@@ -36,22 +36,31 @@
 
 int main(int argc, char **argv)
 {
-    RTC rtc(1);
+    int ret;
+    RTC rtc(I2C_A);
     
-    rtc.year = 2019;
-    rtc.month = 6;
-    rtc.day = 3;
-    rtc.week = 1;
+    Time t;
+    t.year = 2019;
+    t.month = 6;
+    t.day = 3;
+    t.week = 1;
 
-    rtc.hour = 23;  
-    rtc.minute = 59;
-    rtc.second = 57;
+    t.hour = 23;  
+    t.minute = 59;
+    t.second = 57;
     
-    rtc.setTime();
+    ret = rtc.setTime(t);
+    if (ret < 0)
+    {
+        cout << "setTime error" << endl;
+        return -1;
+    }
     
     while(1)
     {
         rtc.timePrintf();
         sleep(1);
     } 
+    
+    return 0;
 }

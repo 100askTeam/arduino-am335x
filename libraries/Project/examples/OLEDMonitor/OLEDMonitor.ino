@@ -163,7 +163,7 @@ string numToString(float i)
 
 int main(int argc, char **argv)
 {
-    OLED oled(1); //实例化OLED
+    OLED oled(SPI_A); //实例化OLED
     DS18B20 ds18b20(GPIO0); //实例化DS18B20
 
     oled.OLEDClearAll(); //清空OLED
@@ -172,9 +172,9 @@ int main(int argc, char **argv)
     
     while(1)
     {
-        oled.OLEDPrint(2, 0, "CPU:" + numToString(getCPUInfo()*100) + "%"); //第二行显示CPU信息
-        oled.OLEDPrint(4, 0, "RAM:" + numToString(getMemInfo()*100) + "%"); //第三行显示RAM信息
-        oled.OLEDPrint(6, 0, "TEP:" + numToString(ds18b20.readTemperature()) + "'C"); //第四行显示DS18B20信息
+        oled.OLEDPrint(0, 2, "CPU:" + numToString(getCPUInfo()*100) + "%"); //第二行显示CPU信息
+        oled.OLEDPrint(0, 4, "RAM:" + numToString(getMemInfo()*100) + "%"); //第三行显示RAM信息
+        oled.OLEDPrint(0, 6, "TEP:" + numToString(ds18b20.readTemperature()) + "'C"); //第四行显示DS18B20信息
         sleep(1);
     }
     

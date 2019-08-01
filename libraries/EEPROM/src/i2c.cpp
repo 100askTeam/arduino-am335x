@@ -19,10 +19,6 @@ I2C::I2C(string bus, unsigned int dev) : m_sPath(bus), m_iDevAddr(dev)
     
     if(ioctl(this->m_iFile, I2C_SLAVE_FORCE, this->m_iDevAddr) < 0)  //I2C_SLAVE or I2C_SLAVE_FORCE
         perror("I2C: Failed to connect to the device\n");
-        
-    //ioctl(this->m_iFile, I2C_TIMEOUT, 1);/*超时时间*/
-    //ioctl(this->m_iFile, I2C_RETRIES, 2);/*重复次数*/
-
 }
 
 unsigned char I2C::readRegister(unsigned int registerAddress)
@@ -45,7 +41,6 @@ unsigned char I2C::readRegister(unsigned int registerAddress)
 #else 
     
     int ret;
-    //unsigned char value;
     struct i2c_rdwr_ioctl_data work_queue;
     
     work_queue.nmsgs  = 2;
@@ -72,11 +67,7 @@ unsigned char I2C::readRegister(unsigned int registerAddress)
     ret = ioctl(this->m_iFile, I2C_RDWR, (unsigned long)&work_queue);
     if(ret < 0)
         printf("readRegister:error during I2C_RDWR ioctl with error code %d\n", ret);
-    
-    //printf("readRegister:0x%x\n", (work_queue.msgs[1]).buf[0]);
-    //value = (work_queue.msgs[1]).buf[0];
-    //free(&work_queue.msgs);
-    //return value;
+    usleep(2000);
     
     return (work_queue.msgs[1]).buf[0];
 #endif
@@ -86,7 +77,6 @@ unsigned char I2C::readRegister(unsigned int registerAddress)
 unsigned char I2C::readRegister(unsigned int registerAddress, int count, unsigned char * buf)
 {
     int ret;
-    //unsigned char value;
     struct i2c_rdwr_ioctl_data work_queue;
     
     work_queue.nmsgs  = 2;
@@ -111,14 +101,13 @@ unsigned char I2C::readRegister(unsigned int registerAddress, int count, unsigne
 
     ret = ioctl(this->m_iFile, I2C_RDWR, (unsigned long)&work_queue);
     if(ret < 0)
+    {
         printf("readRegister:error during I2C_RDWR ioctl with error code %d\n", ret);
-    
-    //printf("readRegister:0x%x\n", (work_queue.msgs[1]).buf[0]);
-    //value = (work_queue.msgs[1]).buf[0];
-    //free(&work_queue.msgs);
-    //return value;
+        return -1;
+    }
     
     memcpy(buf, work_queue.msgs[1].buf, count);
+    usleep(2000);
     
     return 0;
 }
@@ -159,9 +148,11 @@ int I2C::writeRegister(unsigned int registerAddress, unsigned char value)
 
     ret = ioctl(this->m_iFile, I2C_RDWR, (unsigned long)&work_queue);
     if(ret < 0)
-        printf("writeRegister:error during I2C_RDWR ioctl with error code %d\n", ret);
-    
-    //free(&work_queue.msgs);
+    {
+        printf("writeRegister:error during I2C_RDWR ioctl with error code %d\n", ret);  
+        return -1;
+    }
+    usleep(2000);
 #endif
 
     return 0;
@@ -192,7 +183,13 @@ int I2C::writeRegister(unsigned int registerAddress, int count, unsigned char* b
     
     ret = ioctl(this->m_iFile, I2C_RDWR, (unsigned long)&work_queue);
     if(ret < 0)
+    {
         printf("writeRegister:error during I2C_RDWR ioctl with error code %d\n", ret);  
+        return -1;
+    }
+    usleep(2000);
+    
+    return 0;
 }
 
 I2C::~I2C()

@@ -10,7 +10,7 @@
 * Description: 
 * 1. 实例化LED；
 * 2. 实例KEYBOARD；
-* 3. 调用readKey()读取按键状态；
+* 3. 调用readKey()读取按键状态，并判断返回值；
 * 4. 如果KEY4按下，或者长按，关闭LED4;
 */
 #include <Arduino.h>
@@ -19,18 +19,23 @@
 
 int main(int argc, char **argv)
 {
+    int ret;
     LED led(LED4); 
-
     KEYBOARD keyboard;
     
     while(1)
     {
-        keyboard.readKey();
+        ret = keyboard.readKey();
         
-        //如果KEY4按下，或者长按，关闭LED4
-        if((keyboard.code == KEY4) && (keyboard.value == 1 || keyboard.value == 2)) 
-            led.off();
-        else
-            led.on();
+        if (ret == 0)
+        {
+            //如果KEY4按下，或者长按，关闭LED4
+            if((keyboard.getCode() == KEY4) && (keyboard.getValue() == 1 || keyboard.getValue() == 2)) 
+                led.off();
+            else
+                led.on();   
+        }
     }
+    
+    return 0;
 }

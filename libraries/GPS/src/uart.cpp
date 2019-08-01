@@ -36,7 +36,7 @@ int UART::setUART(void)
     }
     
     struct termios options;               //The termios structure is vital
-    tcgetattr(this->m_iFile, &options);            //Sets the parameters associated with file
+    tcgetattr(this->m_iFile, &options);   //Sets the parameters associated with file
 
     // Set up the communications options:
     // 9600 baud, 8-bit, enable receiver, no modem control lines

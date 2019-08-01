@@ -5,7 +5,7 @@
 
 #define GPIO0 (0*32+6)
 #define GPIO1 (0*32+7)
-#define GPIO2 (0*32+13)
+#define GPIO2 (0*32+12)
 #define GPIO3 (1*32+20)
 #define GPIO4 (1*32+18)
 

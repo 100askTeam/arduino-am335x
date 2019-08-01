@@ -16,10 +16,12 @@
 
 int main(int argc, char **argv)
 {
-    GPS gps(2);
+    GPS gps(UART_A);
     
     while(1)
     {   
         gps.printfAnalyzeData();    
-    }   
+    } 
+
+    return 0;   
 }

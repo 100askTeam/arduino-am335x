@@ -34,6 +34,8 @@ int main(int argc, char **argv)
     cout << "Temperature: " << ds18b20.readTemperature() << endl;
     cout << "FamilyCode: " <<  ds18b20.readFamilyCode() << endl;
     cout << "CRC: " <<  ds18b20.readCRC() << endl;
+    
+    return 0;
 }
 
 

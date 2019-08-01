@@ -21,12 +21,14 @@ int main(int argc, char **argv)
 {
     MOTOR motor;
     
-    motor.setSpeed(2); //0~10
+    motor.setSpeed(2); //1~10
 
     motor.motorForward(512); //正转一圈
     motor.motorStop(); //停止
 
     motor.motorReverse(512); //反转一圈
     motor.motorStop(); //停止 
+    
+    return 0;
 }
 

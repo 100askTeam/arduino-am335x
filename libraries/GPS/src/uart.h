@@ -8,6 +8,8 @@
 #define UART2_PATH  "/dev/ttyO2"
 #define UART3_PATH  "/dev/ttyO3"
 
+#define UART_A  2
+
 class UART {
     private:
         string m_sPath;

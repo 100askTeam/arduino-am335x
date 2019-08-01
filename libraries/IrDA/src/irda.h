@@ -16,15 +16,15 @@ class IRDA  {
         string m_sPath;
         int m_iFileIRDA;
         int m_iFileEvent;
-        
-    public: 
-        int code;
-        int value;
+        int m_iCode;
+        int m_iValue;
     
     public:
         IRDA(void);
         IRDA(int pin);
         virtual int readKey(void);
+        virtual int getCode(void);
+        virtual int getValue(void);
         ~IRDA(void);
 };
 

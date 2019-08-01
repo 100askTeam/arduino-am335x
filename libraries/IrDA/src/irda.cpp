@@ -3,7 +3,7 @@
 
 IRDA::IRDA()
 {   
-    this->m_iPin = 0*32+6; //GPIO0
+    this->m_iPin = GPIO0;
     this->m_sPath = IRDA_PATH;
     
     this->m_iFileIRDA = open(this->m_sPath.c_str(), O_RDWR);
@@ -43,7 +43,6 @@ IRDA::~IRDA(void)
     close(this->m_iFileEvent);
 }
 
-
 int IRDA::readKey(void)
 {
     int ret;
@@ -52,16 +51,27 @@ int IRDA::readKey(void)
     ret = read(this->m_iFileEvent , &ev, sizeof(struct input_event));  
     if (ret < 0) {  
         perror("IRDA: read event error!\n");  
+        return -1;
     }  
         
     if (ev.type == EV_KEY) 
     {
-        this->code  = ev.code;
-        this->value = ev.value;
-        
-        //cout<<"code:"<<this->code<<endl;
-        //cout<<"value:"<<this->value<<endl;
+        this->m_iCode  = ev.code;
+        this->m_iValue = ev.value;
+        return 0;
     }
-
-    return 0;
+    else
+        return -1;
 }
+
+int IRDA::getCode(void)
+{
+    return this->m_iCode;
+}
+
+int IRDA::getValue(void)
+{
+    return this->m_iValue;
+}
+
+

@@ -17,22 +17,26 @@
 #include <led.h>
 #include <irda.h>
 
-
 int main(int argc, char **argv)
 {
+    int ret;
     LED led(LED4); 
     led.off();
-
     IRDA irda(GPIO0);
     
     while(1)
     {
-        irda.readKey();
+        ret = irda.readKey();
         
-        //如果KEY_1按下，或者长按，打开LED4
-        if((irda.code == KEY_1) && (irda.value == 1 || irda.value == 2)) 
-            led.on();
-        else
-            led.off();
+        if(ret == 0)
+        {
+            //如果KEY_1按下，或者长按，打开LED4
+            if((irda.getCode() == KEY_1) && (irda.getValue() == 1 || irda.getValue() == 2)) 
+                led.on();
+            else
+                led.off();          
+        }
     }
+    
+    return 0;
 }

@@ -1,12 +1,12 @@
 #######################################
-# Syntax Coloring Map DH11
+# Syntax Coloring Map DHT11
 #######################################
 
 #######################################
 # Datatypes (KEYWORD1)
 #######################################
 
-DH11	KEYWORD1
+DHT11	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -20,4 +20,4 @@ msleep	KEYWORD2
 # Constants (LITERAL1)
 #######################################
 
-dh11	LITERAL1
+dht11	LITERAL1

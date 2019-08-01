@@ -8,23 +8,25 @@ EEPROM::EEPROM(int num)
     else if(num == 2)
         I2C(I2C1, AT24C256);
     
-    this->m_iDevAddr = AT24C256; //bug
+    this->m_iDevAddr = AT24C256; 
 }
 
-int EEPROM::readEEPROM(unsigned int addr, unsigned int len, string *rxBuffer)
+int EEPROM::readEEPROM(unsigned int addr, unsigned int len, string& rxBuffer)
 {
     unsigned int i;
-    unsigned char data[len];
+    char data[len];
 
     len = len + 1;
     
     for (i=0; i<len; i++)
     {
         data[i] = readRegister(addr);
+        if (data[i] < 0)
+            return -1;
         addr++;
     }
     
-    *rxBuffer = (char *)data;
+    rxBuffer = data;
     
     return 0;
 }
@@ -38,13 +40,13 @@ int EEPROM::writeEEPROM(unsigned int addr, unsigned int len, string txBuffer)
     
     for (i=0; i<len; i++)
     {
-        writeRegister(addr, data[i]);
+        if (writeRegister(addr, data[i]) <0)
+            return -1;
         addr++;
     }
 
     return 0;
 }
-
 
 
 int EEPROM::readEEPROM(unsigned int addr, unsigned int len, int *rxBuffer)
@@ -54,6 +56,8 @@ int EEPROM::readEEPROM(unsigned int addr, unsigned int len, int *rxBuffer)
     for (i=0; i<len; i++)
     {
         rxBuffer[i] = readRegister(addr);
+        if (rxBuffer[i] <0)
+            return -1;
         addr++;
     }
     
@@ -66,7 +70,8 @@ int EEPROM::writeEEPROM(unsigned int addr, unsigned int len, int txBuffer[])
     
     for (i=0; i<len; i++)
     {
-        writeRegister(addr, txBuffer[i]);
+        if (writeRegister(addr, txBuffer[i]) <0)
+            return -1;
         addr++;
     }
 
