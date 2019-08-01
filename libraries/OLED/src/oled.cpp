@@ -3,7 +3,7 @@
 
 OLED::OLED(int num) : m_SPInum(num)
 {
-    SPI s(MODE0, 25000000, 8, this->m_SPInum - 1);
+    SPI s(MODE0, 1000000, 8, this->m_SPInum - 1);
     
     this->m_sPath = s.m_sPath;
     this->m_iFile = s.m_iFile;  
