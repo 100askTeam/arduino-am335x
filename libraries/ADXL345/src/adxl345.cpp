@@ -1,5 +1,6 @@
 
 #include "adxl345.h"
+#include "keyboard.h"
 
 static int spi_cs = -1;
 static int spidev0_fd = -1;
@@ -72,13 +73,14 @@ ADXL345::ADXL345(int num) : m_iCS(num - 1)
     signal(SIGTERM, func1); 
     signal(SIGKILL, func1); //无法捕获kill -9 ,应用层不能kill -9 退出，不然会导致/dev/spidev1.x没有释放  
     
+    ostringstream ostr;
+    ostr << getEventNumber("ADXL34x accelerometer");
+    this->m_sPath = ADXL345_EVENT_PATH + ostr.str();
     
-    this->m_sPath = ADXL345_EVENT_PATH;
-    
-    this->m_iEventFile = open(ADXL345_EVENT_PATH, O_RDONLY);  
+    this->m_iEventFile = open(this->m_sPath.c_str(), O_RDONLY);  
     if (this->m_iEventFile < 0) {  
         perror("ADXL345: open file failed\n");  
-    }  
+    }    
 }
 
 int ADXL345::readData(void)

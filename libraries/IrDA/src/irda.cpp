@@ -1,5 +1,6 @@
 
 #include "irda.h"
+#include "keyboard.h"
 
 IRDA::IRDA()
 {   
@@ -13,7 +14,11 @@ IRDA::IRDA()
     if(ioctl(this->m_iFileIRDA, IRDA_IOCINIT, &this->m_iPin) < 0) 
         perror("IRDA: Failed to init to the device\n");
     
-    this->m_iFileEvent = open(IRDA_EVENT_PATH, O_RDONLY);  
+    ostringstream ostr;
+    ostr << getEventNumber("gpio_irda-ir");
+    this->m_sPath = IRDA_EVENT_PATH + ostr.str();
+    
+    this->m_iFileEvent = open(this->m_sPath.c_str(), O_RDONLY);  
     if (this->m_iFileEvent < 0) {  
         perror("IRDA: open file failed\n");  
     }  
@@ -31,10 +36,14 @@ IRDA::IRDA(int pin)
     if(ioctl(this->m_iFileIRDA, IRDA_IOCINIT, &this->m_iPin) < 0) 
         perror("IRDA: Failed to init to the device\n");
     
-    this->m_iFileEvent = open(IRDA_EVENT_PATH, O_RDONLY);  
+    ostringstream ostr;
+    ostr << getEventNumber("gpio_irda-ir");
+    this->m_sPath = IRDA_EVENT_PATH + ostr.str();
+    
+    this->m_iFileEvent = open(this->m_sPath.c_str(), O_RDONLY);  
     if (this->m_iFileEvent < 0) {  
         perror("IRDA: open file failed\n");  
-    }  
+    } 
 }
 
 IRDA::~IRDA(void)

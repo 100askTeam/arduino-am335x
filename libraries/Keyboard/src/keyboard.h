@@ -8,7 +8,7 @@
 #define KEY3 (28)
 #define KEY4 (1)
 
-#define KEYBOARD_EVENT_PATH   "/dev/input/event1"
+#define KEYBOARD_EVENT_PATH   "/dev/input/event"
 
 class KEYBOARD  {
     private:
@@ -25,6 +25,7 @@ class KEYBOARD  {
         ~KEYBOARD(void);
 };
 
+int getEventNumber(char *name);
 
 #endif 
 

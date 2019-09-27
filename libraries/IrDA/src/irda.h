@@ -8,7 +8,7 @@
 #define IRDA_IOCINIT      _IOW(IRDA_IOC_MAGIC, 0, int)
 
 #define IRDA_PATH         "/dev/irda"
-#define IRDA_EVENT_PATH   "/dev/input/event3"
+#define IRDA_EVENT_PATH   "/dev/input/event"
 
 class IRDA  {
     private:
